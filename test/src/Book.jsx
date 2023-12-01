@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import getBooks from './fakeapidata.js';
+import { getBooks } from './services/fakeapidata';
 
 class Book extends Component {
     state = {
@@ -40,9 +40,20 @@ class Book extends Component {
             <div>
                 <h1 className="pt-5 pd-2  ">Your BookSelf App</h1>
                 <br />
-                <div className="mb-3">
-                    <label htmlFor="booksearch" className="form-label px-2">Seach </label>
-                    <input type="text" placeholder="ISBN no or Book Name" onChange={(e) => this.handelSearch(e)} />
+                <div className="container">
+                    <Link
+                        to="/books/new"
+                        className="btn btn-success"
+                        style={{ marginBottom: 20 }}
+                    >
+                        Add Book
+                    </Link>
+                </div>
+
+                <br></br>
+
+                <div className="container">
+                    <input type="text" class="form-control" placeholder="Seach Books by ISBN no or Book Name" onChange={(e) => this.handelSearch(e)} />
                 </div>
                 <br />
 
@@ -62,7 +73,7 @@ class Book extends Component {
                     <tbody>
                         {filtered.map(b => (
                             <tr key={b._id}>
-                                <td><Link to={`/book/${b._id}`} >
+                                <td><Link to={`/books/${b._id}`} >
                                     {b.name}
                                 </Link>
 
@@ -72,7 +83,7 @@ class Book extends Component {
                                 <td>{b.row}</td>
                                 <td>{b.count}</td>
                                 <td>$ {b.cost}</td>
-                                <td>{b.availability ? 'Yes' : 'No'}</td>
+                                <td>{b.availability}</td>
                                 <td>
                                     <button
                                         type="button"
