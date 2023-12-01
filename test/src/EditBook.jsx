@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component} from 'react';
 import Form from './components/common/form';
 import Joi from "joi-browser";
 import QRCode from "react-qr-code";
 import { getCategories } from './services/categories';
 import { getBook, saveBook } from './services/fakeapidata';
+import { Link } from 'react-router-dom';
 
 
 class EditBook extends Form {
-
-
   state = {
     data: {
       name: "",
@@ -75,9 +74,38 @@ class EditBook extends Form {
 
 
     this.setState({ data: this.mapToViewModel(book) });
+    
   }
 
-
+ downloadQRCode = () => {
+    const svgString = document.querySelector('svg').outerHTML; // Get the SVG code
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+  
+    const reader = new FileReader();
+  
+    reader.onload = function(event) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        const pngDataUrl = canvas.toDataURL('image/png');
+        
+        const link = document.createElement('a');
+        link.href = pngDataUrl;
+        link.download = `bookQrCode.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+  
+      img.src = event.target.result;
+    };
+  
+    reader.readAsDataURL(blob);
+  };
 
   mapToViewModel(book) {
     return {
@@ -92,6 +120,8 @@ class EditBook extends Form {
     };
   }
 
+  
+
   doSubmit = () => {
     saveBook(this.state.data);
 
@@ -101,9 +131,13 @@ class EditBook extends Form {
   render() {
     return (
       <div>
-        <h1>{this.state.editOrNew === "new"? "Add New": "Edit"} Book</h1>
-        <QRCode value={JSON.stringify(this.state.data)} />
-        <form onSubmit={this.handleSubmit}>
+        <h1 className='py-4'>{this.state.editOrNew === "new"? "Add New": "Edit"} Book</h1>
+
+        <div className='container'>
+          <div className='row'>
+
+          <div className='col-sm-12 col-md-8'>
+            <form onSubmit={this.handleSubmit}>
           {this.renderInput("name", "Name")}
           {this.renderInput("category", "Category")}
           {this.renderInput("isbn", "ISBN")}
@@ -113,6 +147,23 @@ class EditBook extends Form {
           {this.renderInput("availability", "Availability")}
           {this.renderButton("Save")}
         </form>
+            </div>
+            <div className='col-sm-12 col-md-4'>
+              {this.state.editOrNew!=="new"? 
+             ( <div>
+              <QRCode value={JSON.stringify(this.state.data)} />
+        
+              <button className='my-2 btn btn-primary btn-sm' onClick={this.downloadQRCode}>Download QR Code</button>
+              </div>)
+
+              :null}
+              
+            </div>
+          
+          </div>
+        </div>
+    
+      
       </div>
     );
   }
