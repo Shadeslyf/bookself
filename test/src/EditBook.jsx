@@ -63,8 +63,9 @@ class EditBook extends Form {
 
 
     const bookId = this.props.match.params.id;
+    this.setState({editOrNew:bookId})
     if (bookId === "new"){
-      this.setState({editOrNew:"new"})
+     
       return;
     } 
 
@@ -148,11 +149,12 @@ class EditBook extends Form {
           {this.renderButton("Save")}
         </form>
             </div>
-            <div className='col-sm-12 col-md-4'>
+            <div className='col-sm-12 col-md-4 my-4'>
               {this.state.editOrNew!=="new"? 
              ( <div>
-              <QRCode value={JSON.stringify(this.state.data)} />
-        
+              {/* <QRCode value={JSON.stringify(this.state.data)} /> */}
+              <QRCode value={"https://bookself-mu.vercel.app/books/"+ this.state.data._id}/>
+              <br />
               <button className='my-2 btn btn-primary btn-sm' onClick={this.downloadQRCode}>Download QR Code</button>
               </div>)
 
